@@ -1,0 +1,61 @@
+{
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "mkdir_build_orin",
+			"command": "mkdir",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"args": ["-p", "build_orin"]
+		},
+		{
+			"type": "shell",
+			"label": "cmake",
+			"command": "cmake",
+			"args": [
+				"-DARCH_PLAT_VENDOR=aarch64-ubuntu-linux-gcc9.3.0",
+				"-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/cmake/aarch64-orin-gcc-9.3.0.toolchain.cmake",
+				"-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build_orin/output",
+				"-DBUILD_SHARED_LIBS=ON",
+				"-DUSE_NVIDIA_TEGRA=OFF",
+				"-DENABLE_DUMP_JSON=ON",
+				"-DENABLE_TEST=ON",
+				"-DCMAKE_BUILD_TYPE=Release",
+				"-DUSE_DRIVE_ORIN=ON",
+				".."
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/build_orin"
+			},
+			"dependsOn":[
+				"mkdir_build_orin"
+			]
+		},
+        {
+            "label": "make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "make",
+            "args": ["-j8"], //根据机器cpu核心数量自行调整
+            "options": {
+                "cwd": "${workspaceFolder}/build_orin"
+            },
+        },
+		{
+			"label": "install",
+			"command": "make",
+			"args": ["install"],
+			"options": {
+				"cwd": "${workspaceFolder}/build_orin"
+			},
+		},
+        {
+            "label": "build",
+            "dependsOrder": "sequence",
+            "dependsOn": ["cmake", "make", "install"]
+        },
+	],
+}
