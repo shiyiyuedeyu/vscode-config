@@ -2,60 +2,71 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "mkdir_build_orin",
+			"label": "mkdir_build_aarch64_ubuntu",
 			"command": "mkdir",
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
-			"args": ["-p", "build_orin"]
+			"args": ["-p", "build_aarch64_ubuntu"]
 		},
 		{
 			"type": "shell",
-			"label": "cmake",
+			"label": "cmake_build_aarch64_ubuntu",
 			"command": "cmake",
 			"args": [
-				"-DARCH_PLAT_VENDOR=aarch64-ubuntu-linux-gcc9.3.0",
-				"-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/cmake/aarch64-orin-gcc-9.3.0.toolchain.cmake",
-				"-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build_orin/output",
-				"-DBUILD_SHARED_LIBS=ON",
-				"-DUSE_NVIDIA_TEGRA=OFF",
-				"-DENABLE_DUMP_JSON=ON",
-				"-DENABLE_TEST=ON",
+				"-DARCH_PLAT_VENDOR=aarch64-ubuntu-linux-gcc7.5.0",
+				"-DCMAKE_INSTALL_PREFIX=${workspaceFolder}/build_aarch64_ubuntu/output",
+				"-DBUILD_SHARED_LIBS=OFF",
+				"-DUSE_NVIDIA_TEGRA=ON",
+				"-DENABLE_CUDA=ON",
+				"-DUSE_OPENCV_GPU=ON",
+				"-DUSE_ASCEND=OFF",
+				"-DUSE_NEUWARE=OFF",
+				"-DUSE_GPU=ON",
 				"-DCMAKE_BUILD_TYPE=Release",
-				"-DUSE_DRIVE_ORIN=ON",
+				"-DUSE_TENSORRT=ON",
+				"-DUSE_GPU_PRE_PROCESS=ON",
+				"-DAUTOMSG_VERSION=v1.4.6",
+				"-DPHPC_VERSION=xavier_v2.26",
+				"-DUSE_TZ_SDK=ON",
+				"-DUSE_API_V2=OFF",
 				".."
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/build_orin"
+				"cwd": "${workspaceFolder}/build_aarch64_ubuntu"
 			},
 			"dependsOn":[
-				"mkdir_build_orin"
+				"mkdir_build_aarch64_ubuntu"
 			]
 		},
         {
-            "label": "make",
+            "label": "make_build_aarch64_ubuntu",
             "group": {
-                "kind": "build",
+                "kind": "build_build_aarch64_ubuntu",
                 "isDefault": true
             },
             "command": "make",
             "args": ["-j8"], //根据机器cpu核心数量自行调整
             "options": {
-                "cwd": "${workspaceFolder}/build_orin"
+                "cwd": "${workspaceFolder}/build_aarch64_ubuntu"
             },
         },
 		{
-			"label": "install",
+			"label": "install_build_aarch64_ubuntu",
 			"command": "make",
 			"args": ["install"],
 			"options": {
-				"cwd": "${workspaceFolder}/build_orin"
+				"cwd": "${workspaceFolder}/build_aarch64_ubuntu"
 			},
 		},
         {
-            "label": "build",
+            "label": "build_build_aarch64_ubuntu",
             "dependsOrder": "sequence",
-            "dependsOn": ["cmake", "make", "install"]
+            "dependsOn": [
+				"cmake_build_aarch64_ubuntu",
+				"make_build_aarch64_ubuntu",
+				"install_build_aarch64_ubuntu"
+			]
         },
 	],
 }
